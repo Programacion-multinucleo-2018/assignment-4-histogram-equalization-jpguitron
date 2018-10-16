@@ -85,9 +85,9 @@ __global__ void equalization_kernel(unsigned char* input, unsigned char* output,
 			atomicAdd(&temp[yxn], h_s[yxn]);//¿condición de carrera?
 
 		
-		if(blockIdx.x ==0 && blockIdx.y==0 &&yxn < 256 &&h_s[yxn]!=0 )
+		if(blockIdx.x ==0 && blockIdx.y==0 &&yxn < 256 &&temp[yxn]!=0 )
 		{
-			printf("%d %d\n",h_s[yxn], yxn);
+			printf("%d %d\n",temp[yxn], yxn);
 		}
 	}
 	
