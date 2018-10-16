@@ -10,53 +10,103 @@
 
 #include <chrono>
 //nvcc -o exe img_eq.cu -lopencv_core -lopencv_highgui -lopencv_imgproc -std=c++11
+//se requieren minimo 256 threadspor bloque
+//falta hacer por si se acaban los bloques
 #define N 5//Change equalizationing window size
 
 using namespace std;
 
-/*__global__ void equalization_kernel(unsigned char* input, unsigned char* output, int width, int height, int step)
+
+
+__global__ void equalization_kernel(unsigned char* input, unsigned char* output, int width, int height, int step, int *temp)
 {
+
+	//float imgSize= width * height;
+	float imgSize= blockDim.x * blockDim.y;
+
+	int x = threadIdx.x;
+	int y = threadIdx.y;
 
 	const int xIndex = blockIdx.x * blockDim.x + threadIdx.x;
 	const int yIndex = blockIdx.y * blockDim.y + threadIdx.y;
 
-	int flr = floor (N/2.0);
-	int matAvg = 0;
+	const int tid = yIndex*step+xIndex;
 
-	//Avoiding edge pixels
-	if ((xIndex < width) && (yIndex < height))
+	__shared__ int h[256];
+	__shared__ int h_s[256];
+
+	int yxn = x+y*blockDim.x;
+
+	if(yxn < 256)
 	{
-		//Current pixel
-		const int tid = yIndex * step + (3 * xIndex);
-
-		int bAvg = 0;
-		int grAvg = 0;
-		int rAvg = 0;
-
-
-		//Get the average of the surrounding pixels
-		for (int i = -flr; i <= flr; i++)
-		{
-			for (int j = -flr; j <= flr; j++)
-			{
-
-
-				const int tid = (yIndex+i) * step + (3 * (xIndex+j));
-				if(xIndex+j>0 && yIndex+i>0 && xIndex+j<width && yIndex+i<height )
-				{
-					matAvg+=1;
-					bAvg += input[tid];
-					grAvg += input[tid + 1];
-					rAvg += input[tid + 2];
-				}
-			}
-		}
-
-		//Changing the central pixel with the average of the others
-		output[tid] = static_cast<unsigned char>(bAvg/(matAvg));
-		output[tid+1] = static_cast<unsigned char>(grAvg/(matAvg));
-		output[tid+2] = static_cast<unsigned char>(rAvg/(matAvg));
+			h[yxn] = 0;
+			h_s[yxn] = 0;
 	}
+	__syncthreads();
+	
+	if((xIndex < width) && (yIndex < height))
+	{
+		atomicAdd(&h[input[tid]], 1);
+
+	}
+
+	__syncthreads();
+
+
+	if(yxn < 256)
+	{
+		int a = 0;
+		for(int x = 0; x <= yxn; x++)
+		{
+			atomicAdd(&h_s[yxn], h[x]);
+			a += h[x];
+		}
+	}
+	__syncthreads();
+
+	
+	/*if(yxn < 256)
+	{
+		h_s[yxn] = h_s[yxn]*(255/imgSize); 	
+	}
+
+	__syncthreads();
+
+	if((xIndex < width) && (yIndex < height))
+	{
+		int actual = input[tid];
+		output[tid] = h_s[actual];
+		
+	}*/
+
+	if(yxn < 256)
+	{
+		if(h_s[yxn] != 0)
+			atomicAdd(&temp[yxn], h_s[yxn]);//¿condición de carrera?
+
+		
+		if(blockIdx.x ==0 && blockIdx.y==0 &&yxn < 256 &&h_s[yxn]!=0 )
+		{
+			printf("%d %d\n",h_s[yxn], yxn);
+		}
+	}
+	
+	__syncthreads();
+	if(yxn < 256 && blockIdx.x == 0 && blockIdx.y==0)
+	{
+
+		temp[yxn] = temp[yxn]*(255/imgSize); 	
+
+	}
+
+	__syncthreads();
+
+	if((xIndex < width) && (yIndex < height))
+	{
+		int actual = input[tid];
+		output[tid] = temp[actual];
+	}
+
 }
 
 void equalization(const cv::Mat& input, cv::Mat& output)
@@ -66,12 +116,15 @@ void equalization(const cv::Mat& input, cv::Mat& output)
 
 	size_t colorBytes = input.step * input.rows;
 	size_t grayBytes = output.step * output.rows;
+	size_t tempSize = 256 *sizeof(int);
 
+	int *temp;
 	unsigned char *d_input, *d_output;
 
 	// Allocate device memory
 	SAFE_CALL(cudaMalloc(&d_input, colorBytes), "CUDA Malloc Failed");
 	SAFE_CALL(cudaMalloc(&d_output, grayBytes), "CUDA Malloc Failed");
+	SAFE_CALL(cudaMalloc(&temp, tempSize), "CUDA Malloc Failed");
 
 	// Copy data from OpenCV input image to device memory
 	SAFE_CALL(cudaMemcpy(d_input, input.ptr(), colorBytes, cudaMemcpyHostToDevice), "CUDA Memcpy Host To Device Failed");
@@ -85,7 +138,7 @@ void equalization(const cv::Mat& input, cv::Mat& output)
 	printf("equalization_kernel<<<(%d, %d) , (%d, %d)>>>\n", grid.x, grid.y, block.x, block.y);
 
 	// Launch the color conversion kernel
-	equalization_kernel <<<grid, block >>>(d_input, d_output, input.cols, input.rows, static_cast<int>(input.step));
+	equalization_kernel <<<grid, block >>>(d_input, d_output, input.cols, input.rows, static_cast<int>(input.step),temp);
 
 	// Synchronize to check for any kernel launch errors
 	SAFE_CALL(cudaDeviceSynchronize(), "Kernel Launch Failed");
@@ -96,7 +149,7 @@ void equalization(const cv::Mat& input, cv::Mat& output)
 	// Free the device memory
 	SAFE_CALL(cudaFree(d_input), "CUDA Free Failed");
 	SAFE_CALL(cudaFree(d_output), "CUDA Free Failed");
-}*/
+}
 
 int main(int argc, char *argv[])
 {
@@ -108,7 +161,7 @@ int main(int argc, char *argv[])
   		imagePath = argv[1];
 
 	// Read input image from the disk
-	/*cv::Mat input = cv::imread(imagePath, CV_LOAD_IMAGE_COLOR);
+	cv::Mat input = cv::imread(imagePath, CV_LOAD_IMAGE_COLOR);
 
 	if (input.empty())
 	{
@@ -123,7 +176,7 @@ int main(int argc, char *argv[])
 	cv::cvtColor(input, input_bw, cv::COLOR_BGR2GRAY);
 
 	auto start_cpu =  chrono::high_resolution_clock::now();
-	//equalization(input, output);
+	equalization(input_bw, output);
 	auto end_cpu =  chrono::high_resolution_clock::now();
 	chrono::duration<float, std::milli> duration_ms = end_cpu - start_cpu;
 	printf("elapsed %f ms\n", duration_ms.count());
@@ -138,7 +191,7 @@ int main(int argc, char *argv[])
 	imshow("Output", output);
 
 	//Wait for key press
-	cv::waitKey();*/
+	cv::waitKey();
 
 	return 0;
 }
