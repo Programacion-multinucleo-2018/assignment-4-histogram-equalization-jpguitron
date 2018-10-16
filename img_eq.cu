@@ -9,7 +9,7 @@
 #include <cuda_runtime.h>
 
 #include <chrono>
-
+//nvcc -o exe img_eq.cu -lopencv_core -lopencv_highgui -lopencv_imgproc -std=c++11
 #define N 5//Change equalizationing window size
 
 using namespace std;
