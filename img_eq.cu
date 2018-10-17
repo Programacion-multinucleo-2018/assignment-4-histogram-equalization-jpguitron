@@ -12,20 +12,57 @@
 //nvcc -o exe img_eq.cu -lopencv_core -lopencv_highgui -lopencv_imgproc -std=c++11
 //se requieren minimo 256 threadspor bloque
 //falta hacer por si se acaban los bloques
-#define N 5//Change equalizationing window size
+
 
 using namespace std;
 
+__global__ void save_to_image(unsigned char* input, unsigned char* output, int width, int height, int step, int *temp)
+{
+	const int xIndex = blockIdx.x * blockDim.x + threadIdx.x;
+	const int yIndex = blockIdx.y * blockDim.y + threadIdx.y;
+	const int tid = yIndex*step+xIndex;
 
+	if((xIndex < width) && (yIndex < height))
+	{
+		int actual = input[tid];
+		output[tid] = temp[actual];
+	}
+}
 
-__global__ void equalization_kernel(unsigned char* input, unsigned char* output, int width, int height, int step, int *temp)
+__global__ void equalization_phase2(unsigned char* input, unsigned char* output, float imgSize, int *temp)
 {
 
-	//float imgSize= width * height;
-	float imgSize= blockDim.x * blockDim.y;
+	int yxn = threadIdx.x+threadIdx.y*blockDim.x;
 
-	int x = threadIdx.x;
-	int y = threadIdx.y;
+
+	if(yxn < 256 && blockIdx.x == 0 && blockIdx.y==0)
+	{
+		temp[yxn] = temp[yxn]*(255/imgSize); 
+	}
+	__syncthreads();
+}
+
+__global__ void equalization_phase1(unsigned char* input, unsigned char* output, int *temp)
+{
+
+	
+	int yxn = threadIdx.x+threadIdx.y*blockDim.x;
+
+
+	if(yxn < 256 && blockIdx.x ==0 && blockIdx.y==0)
+	{
+		int a = 0;
+		__syncthreads();
+		for(int x = 0; x <= yxn; x++)
+			a += temp[x];
+		
+		temp[yxn] = a;
+	}
+
+}
+
+__global__ void generate_histogram(unsigned char* input, unsigned char* output, int width, int height, int step, int *temp)
+{
 
 	const int xIndex = blockIdx.x * blockDim.x + threadIdx.x;
 	const int yIndex = blockIdx.y * blockDim.y + threadIdx.y;
@@ -33,79 +70,23 @@ __global__ void equalization_kernel(unsigned char* input, unsigned char* output,
 	const int tid = yIndex*step+xIndex;
 
 	__shared__ int h[256];
-	__shared__ int h_s[256];
 
-	int yxn = x+y*blockDim.x;
+	int yxn = threadIdx.x+threadIdx.y*blockDim.x;
 
 	if(yxn < 256)
-	{
 			h[yxn] = 0;
-			h_s[yxn] = 0;
-	}
+
 	__syncthreads();
 	
 	if((xIndex < width) && (yIndex < height))
 	{
 		atomicAdd(&h[input[tid]], 1);
-
 	}
 
 	__syncthreads();
-
 
 	if(yxn < 256)
-	{
-		int a = 0;
-		for(int x = 0; x <= yxn; x++)
-		{
-			atomicAdd(&h_s[yxn], h[x]);
-			a += h[x];
-		}
-	}
-	__syncthreads();
-
-	
-	/*if(yxn < 256)
-	{
-		h_s[yxn] = h_s[yxn]*(255/imgSize); 	
-	}
-
-	__syncthreads();
-
-	if((xIndex < width) && (yIndex < height))
-	{
-		int actual = input[tid];
-		output[tid] = h_s[actual];
-		
-	}*/
-
-	if(yxn < 256)
-	{
-		if(h_s[yxn] != 0)
-			atomicAdd(&temp[yxn], h_s[yxn]);//¿condición de carrera?
-
-		
-		if(blockIdx.x ==0 && blockIdx.y==0 &&yxn < 256 &&temp[yxn]!=0 )
-		{
-			printf("%d %d\n",temp[yxn], yxn);
-		}
-	}
-	
-	__syncthreads();
-	if(yxn < 256 && blockIdx.x == 0 && blockIdx.y==0)
-	{
-
-		temp[yxn] = temp[yxn]*(255/imgSize); 	
-
-	}
-
-	__syncthreads();
-
-	if((xIndex < width) && (yIndex < height))
-	{
-		int actual = input[tid];
-		output[tid] = temp[actual];
-	}
+		atomicAdd(&temp[yxn], h[yxn]);
 
 }
 
@@ -138,8 +119,10 @@ void equalization(const cv::Mat& input, cv::Mat& output)
 	printf("equalization_kernel<<<(%d, %d) , (%d, %d)>>>\n", grid.x, grid.y, block.x, block.y);
 
 	// Launch the color conversion kernel
-	equalization_kernel <<<grid, block >>>(d_input, d_output, input.cols, input.rows, static_cast<int>(input.step),temp);
-
+	generate_histogram <<<grid, block >>>(d_input, d_output, input.cols, input.rows, static_cast<int>(input.step),temp);
+	equalization_phase1 <<<grid, block >>>(d_input, d_output, temp);
+	equalization_phase2 <<<grid, block >>>(d_input, d_output, input.cols * input.rows,temp);
+	save_to_image <<<grid, block >>>(d_input, d_output, input.cols, input.rows, static_cast<int>(input.step),temp);
 	// Synchronize to check for any kernel launch errors
 	SAFE_CALL(cudaDeviceSynchronize(), "Kernel Launch Failed");
 
