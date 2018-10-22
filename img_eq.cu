@@ -34,7 +34,6 @@ __global__ void equalization_phase2(unsigned char* input, unsigned char* output,
 
 	int yxn = threadIdx.x+threadIdx.y*blockDim.x;
 
-
 	if(yxn < 256 && blockIdx.x == 0 && blockIdx.y==0)
 	{
 		temp[yxn] = temp[yxn]*(255/imgSize); 
@@ -45,9 +44,7 @@ __global__ void equalization_phase2(unsigned char* input, unsigned char* output,
 __global__ void equalization_phase1(unsigned char* input, unsigned char* output, int *temp)
 {
 
-	
 	int yxn = threadIdx.x+threadIdx.y*blockDim.x;
-
 
 	if(yxn < 256 && blockIdx.x ==0 && blockIdx.y==0)
 	{
@@ -119,10 +116,17 @@ void equalization(const cv::Mat& input, cv::Mat& output)
 	printf("equalization_kernel<<<(%d, %d) , (%d, %d)>>>\n", grid.x, grid.y, block.x, block.y);
 
 	// Launch the color conversion kernel
+	auto start_cpu =  chrono::high_resolution_clock::now();
+	
 	generate_histogram <<<grid, block >>>(d_input, d_output, input.cols, input.rows, static_cast<int>(input.step),temp);
 	equalization_phase1 <<<grid, block >>>(d_input, d_output, temp);
 	equalization_phase2 <<<grid, block >>>(d_input, d_output, input.cols * input.rows,temp);
 	save_to_image <<<grid, block >>>(d_input, d_output, input.cols, input.rows, static_cast<int>(input.step),temp);
+	
+	auto end_cpu =  chrono::high_resolution_clock::now();
+	chrono::duration<float, std::milli> duration_ms = end_cpu - start_cpu;
+	printf("elapsed %f ms\n", duration_ms.count());
+
 	// Synchronize to check for any kernel launch errors
 	SAFE_CALL(cudaDeviceSynchronize(), "Kernel Launch Failed");
 
@@ -158,11 +162,9 @@ int main(int argc, char *argv[])
 
 	cv::cvtColor(input, input_bw, cv::COLOR_BGR2GRAY);
 
-	auto start_cpu =  chrono::high_resolution_clock::now();
+	
 	equalization(input_bw, output);
-	auto end_cpu =  chrono::high_resolution_clock::now();
-	chrono::duration<float, std::milli> duration_ms = end_cpu - start_cpu;
-	printf("elapsed %f ms\n", duration_ms.count());
+
 
 
 	//Allow the windows to resize
