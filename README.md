@@ -32,27 +32,27 @@ A total of 140 tests were executed
 GPU
 
 Average timing:
-1. dog.jpeg = 0.061996
-2. dog2.jpeg = 0.0306167
-3. dog3.jpeg = 0.0292741
-4. scenery.jpg = 0.0232988
-5. woman.jpg = 0.0454346
-6. woman2.jpg = 0.035535
-7. woman3.jpg = 0.0316561
+1. dog.jpeg = 0.061996 ms
+2. dog2.jpeg = 0.0306167 ms
+3. dog3.jpeg = 0.0292741 ms 
+4. scenery.jpg = 0.0232988 ms
+5. woman.jpg = 0.0454346 ms
+6. woman2.jpg = 0.035535 ms 
+7. woman3.jpg = 0.0316561 ms
 
-Total average timing: 0.0368301857
+Total average timing: 0.0368301857 ms
 
 CPU
 
 Average timing:
-1. dog.jpeg = 256.4787612
-2. dog2.jpeg = 285.4946318
-3. dog3.jpeg = 280.9534698
-4. scenery.jpg = 11.725012
-5. woman.jpg = 237.5207017
-6. woman2.jpg = 232.6109392
-7. woman3.jpg = 231.8336227
+1. dog.jpeg = 256.4787612 ms
+2. dog2.jpeg = 285.4946318 ms
+3. dog3.jpeg = 280.9534698 ms
+4. scenery.jpg = 11.725012 ms
+5. woman.jpg = 237.5207017 ms
+6. woman2.jpg = 232.6109392 ms 
+7. woman3.jpg = 231.8336227 ms
 
-Total average timing: 213.3563962
+Total average timing: 213.3563962 ms
 
 Speed up: 5960.2396729701
