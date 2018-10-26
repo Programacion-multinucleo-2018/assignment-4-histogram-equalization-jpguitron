@@ -1,0 +1,130 @@
+  ---------------dog2.jpeg
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 323.386230 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 283.930481 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 277.656067 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 281.293060 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 283.627380 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 281.028412 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 285.560913 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 280.057281 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 278.012390 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 280.394104 ms
+
+---------------dog3.jpeg--------------------------------
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 297.401886 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 281.544098 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 275.942810 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 279.050018 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 275.239410 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 280.626465 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 276.235352 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 282.884949 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 276.514404 ms
+Input image step: 5760 rows: 3840 cols: 5760
+elapsed 284.095306 ms
+
+------------------------------------scenery.jpg
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 23.349840 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.549716 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.873575 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.490869 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 9.614155 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.824958 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.384826 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.302751 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.650366 ms
+Input image step: 1024 rows: 683 cols: 1024
+elapsed 10.209064 ms
+-------------------woman.jpg
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 274.351410 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 231.594452 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 228.470551 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 235.031113 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 237.197296 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 233.794464 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 232.756378 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 229.035233 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 235.907288 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 237.068832 ms
+
+--------------------woman2.jpg
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 247.079437 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 236.740540 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 230.349884 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 225.887894 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 234.638611 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 229.317505 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 229.892929 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 227.109528 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 229.587830 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 235.505234 ms
+
+-----------------------------woman3.jpg
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 232.126526 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 237.659454 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 237.053787 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 235.350647 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 229.383621 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 227.041138 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 232.056412 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 227.281769 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 230.637527 ms
+Input image step: 5184 rows: 3456 cols: 5184
+elapsed 229.745346 ms

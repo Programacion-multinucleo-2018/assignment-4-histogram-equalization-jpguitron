@@ -38,7 +38,6 @@ __global__ void equalization_phase2(unsigned char* input, unsigned char* output,
 	{
 		temp[yxn] = temp[yxn]*(255/imgSize); 
 	}
-	__syncthreads();
 }
 
 __global__ void equalization_phase1(unsigned char* input, unsigned char* output, int *temp)
@@ -49,7 +48,6 @@ __global__ void equalization_phase1(unsigned char* input, unsigned char* output,
 	if(yxn < 256 && blockIdx.x ==0 && blockIdx.y==0)
 	{
 		int a = 0;
-		__syncthreads();
 		for(int x = 0; x <= yxn; x++)
 			a += temp[x];
 		

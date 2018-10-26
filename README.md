@@ -24,3 +24,35 @@ Rubric:
 5. For the GPU version, used shared memory where necessary.
 6. Both images are displayed at the end.
 7. Calculation times and speedup obtained are incuded in the Readme.
+
+## Results
+
+A total of 140 tests were executed
+
+GPU
+
+Average timing:
+1. dog.jpeg = 0.061996
+2. dog2.jpeg = 0.0306167
+3. dog3.jpeg = 0.0292741
+4. scenery.jpg = 0.0232988
+5. woman.jpg = 0.0454346
+6. woman2.jpg = 0.035535
+7. woman3.jpg = 0.0316561
+
+Total average timing: 0.0368301857
+
+CPU
+
+Average timing:
+1. dog.jpeg = 256.4787612
+2. dog2.jpeg = 285.4946318
+3. dog3.jpeg = 280.9534698
+4. scenery.jpg = 11.725012
+5. woman.jpg = 237.5207017
+6. woman2.jpg = 232.6109392
+7. woman3.jpg = 231.8336227
+
+Total average timing: 213.3563962
+
+Speed up: 5960.2396729701
