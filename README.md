@@ -25,6 +25,8 @@ Rubric:
 6. Both images are displayed at the end.
 7. Calculation times and speedup obtained are incuded in the Readme.
 
+**Grade: 100**
+
 ## Results
 
 A total of 140 tests were executed
